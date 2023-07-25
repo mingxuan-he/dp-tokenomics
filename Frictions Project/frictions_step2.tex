@@ -1,0 +1,288 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with`a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% to typeset URLs, URIs, and DOIs
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+
+% Bibliography
+\usepackage[style=apa, backend=biber, natbib]{biblatex}
+\addbibresource{../references.bib}
+%\usepackage{natbib}
+
+% useful packages
+\usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage{caption,subcaption}
+\captionsetup{compatibility=false}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{float}
+\usepackage{tikz-cd}
+\def\UrlFont{\rmfamily}
+
+\renewcommand \thesection{\Roman{section}}
+\renewcommand \thesubsection{\arabic{section}.\arabic{subsection}}
+
+
+\begin{document}
+
+\title{Dynamic Modeling for Optimal Cryptoeconomic Policies}
+
+
+\author{Mingxuan He\\
+ECMA 33603\\
+Prof. Andre Silva
+}
+
+\maketitle 
+
+\begin{abstract}
+    This paper introduces the idea of my thesis research project and documents my work so far. I provide a research topic description, discuss relevant literature including my replication for a baseline model, and report the current progress on my extended model, which combines two ideas from Stage 1 of the project.
+\end{abstract}
+
+%\tableofcontents
+
+\section{Introduction}
+In December 2018, the market capitalization of cryptocurrencies reached nearly 400 billion US Dollars, equivalent to 11\% of M1 in the USA \parencite{schilling2019some}. As the size of blockchain and cryptocurrency networks grew, there has been increasing discussion around volatility and welfare in cryptoeconomies, and ways for the issuer of the cryptocurrency protocol to implement policies to ensure there is sustainable benefits for the network of token holders. These policies are often referred to as the protocol's ``tokenomics". 
+
+As of today, most cryptoeconomic policies are static, which means the supply of tokens grows or shrinks according to a deterministic mechanism. For example, the supply of Bitcoin grows at a deterministic and decreasing rate. Many protocols cite these static policies act as an important aspect of decentralization: as the protocol pre-commits to a set of token issuance and burning policies, it reduces the requirement for trust from users in the procotol's governance. However, as demonstrated by both academic literature and recent events, the lack of response mechanisms can lead to devastating results when the cryptoeconomy faces exogenous shocks.
+
+In many modern blockchain protocols, ``staking" and ``burning" are the primary coded policy rules in the underlying blockchain system. Staking is a mechanism where the user chooses to stake their token in the protocol for a period of time, after which the protocol rewards them with a staking yield that is paid out by newly minted tokens. In monetary economics terms, staking increases the total token supply by introducing new tokens into circulation, while reduces the amount of tokens in circulation due to illiquidity of the staked tokens. On the other hand, burning is a mechanism where the protocol burns (permanently destroys) some tokens from the supply, which usually comes from the transaction fees paid by users to conduct blockchain transactions.
+
+Current staking and burning policy rules were primarily designed for the purpose of offering user incentives and/or preventing inflation from over-issuance. Most importantly, they do not respond to shock factors. My research aims to develop a model framework where staking and burning rules can be set dynamically to maximize the welfare of relevant actors in the cryptoeconomy.
+
+This paper is organized as follows: Section \ref{sec:literature} provides an overview of the established literature. Section \ref{sec:model} outlines the baseline model by \citet{biais2020equilibrium} and replicates its solutions (\ref{sec:baseline}) and outlines the current progress of my extended model (\ref{sec:extensions}).
+
+
+\section{Literature Review}
+\label{sec:literature}
+My research is related to the emerging literature on modeling cryptocurrencies and the blockchain economy. Following \citet{yermack2015bitcoin} that argued that Bitcoin is not a currency, there was an interest in studying Bitcoin as a financial asset. \citet{athey2016bitcoin, garratt2018bitcoin, biais2020equilibrium, pagnotta2022decentralizing} studied equilibria in asset pricing models for Bitcoin. \citet{schilling2019some, schilling2019currency} focused on the interactions between Bitcoin and the real economy, including dollar exchange rate and currency substitution. A broader set of models for Bitcoin include \citet{bolt2020value, catalini2020some, hinzen2022bitcoin, chiu2017economics, huberman2021monopoly}. For Proof-of-Stake protocols, \citet{saleh2019volatility, saleh2021blockchain} modeled their general volatility and welfare, while \citet{catalini2020markets} examined their tokenomics in the presence of an attack. A common result of the aforementioned asset pricing models is that static token supply causes all shocks are absorbed by the token price, which explains the high volatility of Bitcoin. This provides the motivation for an endogenous token supply in my model, which adds response mechanisms in terms of dynamic policy rules therefore can potentially mitigate the price effect of exogenous shocks.
+
+Another set of literature has attempted to identify optimal policy rules for special types of tokens. \citet{cong2021tokenomics, cong2022token} built an asset pricing model featuring token issuance as means of platform financing and user growth leveraging network effects. \citet{sockin2023decentralization, sockin2023model} modeled cryptocurrencies as platform utility tokens and discussed elastic token issuance. \citet{d2022can} studied how stablecoin issuers can profit from seigniorage while maintaining the stablecoin's peg. \citet{fernandez2021central, zhu2019framework} are examples of papers proposing optimal monetary policies for CBDCs. While the policy goals of utility tokens are very specific (defending peg for stablecoins/CBDCs, making profit for stablecoins/platform tokens), I adopt the general policy goal of maximizing user welfare, measured by consumption and transactional benefits.
+
+My research is also related to the large literature on cryptocurrencies. Notable empirical researches include \cite{liu2021risks} on the risk factors of cryptocurrencies, \cite{makarov2020trading} on the arbitrage spreads among different cryptocurrency markets. \cite{griffin2020bitcoin} studied the relationship between Tether purchases and cryptocurrency prices. Studies on the microeconomics of blockchain mechanisms include \citet{budish2018economic, biais2019blockchain, gans2019more, gans2022mechanism, huberman2021monopoly}.
+
+
+\section{Model}
+\label{sec:model}
+
+\subsection{Baseline model}
+\label{sec:baseline}
+This model was proposed by \citeauthor*{biais2020equilibrium} in their 2020 paper in The Journal of Finance titled ``Equilibrium Bitcoin Pricing". Their main idea is that the fundamental value of cryptocurrencies comes from the stream of future transactional benefits (e.g. access to unique goods, not expropriated/taxed/constrained by government, direct internet access). The primary result is that Bitcoin price changes partly due to changes in fundamentals (net transactional benefits) but mostly due to extrinsic volatility.
+
+The model is a two-period cryptoeconomy with overlapping generations of users. The cryptoeconomy includes three representative agents (user, validator, and hacker), three financial assets (risk-free asset, standard currency, and cryptocurrency). It features a fixed schedule money supply.
+
+\subsubsection{Users}
+In each period, young users receive some endowment in numeraire goods, which they spend on consumption goods and the three financial assets. They pay a fee on any cryptocurrency purchased. Old users consume all their savings from the previous period and receive transactional benefits on their cryptocurrencies. A portion of their crypto savings gets hacked. The users' budget constraints are:
+
+\begin{align}
+    c_t^y &= e_t- s_t - (1+\varphi_t) q_t p_t - \hat{q}_t \hat{p}_t\\
+    c_{t+1}^o &= s_t (1+r_t) + (1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1} \nonumber \\
+    &+ \theta_{t+1} (1-h_{t+1}) q_t p_{t+1} 
+\end{align}
+\noindent
+$e_t$: endowment\\
+$s_t$: quantity of risk-free assets held\\
+$q_t, \hat{q}_t$: quantities of crypto and dollars held\\
+$p_t, \hat{p}_t$: prices (in units of consumption goods) of crypto and dollars\\
+$h_{t+1}$: portion of crypto hacked by hackers\\
+$\varphi_t$: transaction fees involved in using crypto (exog.)\footnote{The analysis remain largely unchanged if we include a transaction cost when selling crypto in period $t+1$ as well.}\\
+$\theta_{t+1}$: transactional benefits from using crypto (exog.) (assume $\theta_{t+1}\geq-1$)
+
+\subsubsection{Validators}
+Validators receive newly minted tokens as block rewards, similar to a lump-sum transfer of money. The validators' budget constraint is:
+\begin{align}
+    c_{t+1}^v &= (X_{t+1} - X_t) p_{t+1} + \varphi_{t+1} q_{t+1} p_{t+1}
+\end{align}
+\noindent
+$X_t$: stock token supply\\
+$X_{t+1} - X_t$: increase in token supply (newly minted tokens)
+
+\subsubsection{Hackers}
+Hackers hack a portion of users' crypto. The hackers' budget constraint is:
+\begin{align}
+    c_{t+1}^h &= h_{t+1} q_t p_{t+1}
+\end{align}
+
+\noindent
+I made a graph summarizing of the interaction of the agents in two periods: Figure \ref{fig:tikz-b}.
+
+\begin{equation}
+\label{fig:tikz-b}
+\begin{tikzcd}[ampersand replacement=\&, column sep = 4.5em, row sep = 4.5em]
+Protocol 
+\ar[d, "\substack{\text{newly minted}\\\text{tokens}}" ']
+\&
+\ar[d, shift right, "\substack{\text{endow-}\\ \text{ment}}" 'near start]
+\ar[d, shift left, "\substack{\text{purchase}\\ \text{assets}}" near start]
+\&
+\ar[d, "\substack{\text{transact.}\\ \text{benefits}}" ]
+\&
+\\
+Validators
+\& 
+\substack{Young\\Users}
+\ar[l,"\substack{\text{transact.}\\ \text{fees}}" ']
+\ar[r, dashed, "t+1", 
+"\substack{\text{hold}\\\text{assets}}" ']
+\& 
+\substack{Old\\Users}
+\ar[r, "\substack{\text{hacked}\\ \text{tokens}}"]
+\&
+Hackers
+\end{tikzcd}
+\end{equation}
+
+\subsubsection{Solution}
+Here are my own steps for obtaining the pricing equations for cryptocurrency and standard currency.\\
+The market clearing condition for the three financial assets are:
+\begin{align}
+    \text{crypto: } q_t &= X_t \\
+    \text{dollars: } \hat{q}_t &= m \\
+    \text{risk-free assets: } s_t &= 0 \\
+\end{align}
+Market for consumption goods also clears (by Walras's Law):
+\begin{equation}
+    c_t^y + c_t^o + c_t^v + c_t^h = e_t
+\end{equation}
+A young user in period $t$ solves:
+\begin{align}
+\max_{s_t, q_t, \hat{q}_t} &u(c_t^y) + \beta\mathbb{E}_t u(c_{t+1}^o)\\  
+    \text{subject to  } & \text{user's budget constraints and } c_t^y \geq0 \nonumber
+\end{align}
+$^*$ Information set at period $t$ includes $ \{\theta_t, \varphi_t, \pi_t\}$ \\
+The Lagrangian is
+\begin{align}
+    \mathcal{L} = &\ u(c_t^y) + \beta\mathbb{E}_t u(c_{t+1}^o) +\lambda c_t^y \nonumber \\ 
+    = &\ u(e_t- s_t - (1+\varphi_t) q_t p_t - \hat{q}_t \hat{p}_t) \nonumber \\
+    & + \beta \mathbb{E}_t\left[u(s_t (1+r_t) + (1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1}
+    + \theta_{t+1} (1-h_{t+1}) q_t p_{t+1}  ) \right] \nonumber \\
+    & + \lambda (e_t- s_t - (1+\varphi_t) q_t p_t - \hat{q}_t \hat{p}_t)
+\end{align}
+First-order conditions:
+\begin{align}
+    s_t: & -u'(c_t^y) + \beta(1+r_t) \mathbb{E}_t[u'(c_{t+1}^o)] = \lambda\\
+    q_t: & -(1+\varphi_t) p_t  u'(c_t^y) + \beta \mathbb{E}_t[u'(c_{t+1}^o)(1-h_{t+1})(1+\theta_{t+1})p_{t+1}] = \lambda (1+\varphi_t) p_t \\
+    \hat{q}_t: & -\hat{p}_t u'(c_t^y) + \beta \mathbb{E}_t[u'(c_{t+1}^o) \hat{p}_{t+1}] = \lambda \hat{p}_t
+\end{align}
+
+\noindent
+For Eqn. 14, substitute $\lambda$ with LHS of Eqn. 13:
+\begin{align}
+    &-(1+\varphi_t) p_t  u'(c_t^y) + \beta \mathbb{E}_t[u'(c_{t+1}^o)(1-h_{t+1})(1+\theta_{t+1})p_{t+1}] \nonumber \\
+=&\ (1+\varphi_t)p_t
+\{-u'(c_t^y) + \beta(1+r_t) \mathbb{E}_t[u'(c_{t+1}^o)]\} \\
+\Rightarrow& \nonumber \\
+&\beta \mathbb{E}_t[u'(c_{t+1}^o)(1-h_{t+1})(1+\theta_{t+1})p_{t+1}] \nonumber \\
+=&\ (1+\varphi_t)p_t\beta(1+r_t) \mathbb{E}_t[u'(c_{t+1}^o)] \\
+\Rightarrow & \nonumber \\
+p_t=&\ \frac{1}{1+r_t} \frac{1}{1+\varphi_t}\mathbb{E}_t[u'(c_{t+1}^o)]^{-1} \mathbb{E}_t[u'(c_{t+1}^o)(1-h_{t+1})(1+\theta_{t+1})p_{t+1}]
+\end{align}
+
+Eqn. 18 is the pricing equation for cryptocurrency. Intuitively, $\frac{1}{1+r_t}$ is a discount by the interest rate, $1-h_{t+1}$ is the hack risk, $\frac{1+\theta_{t+1}}{1+\varphi_t}$ measures the net transactional benefits generating the currency's fundamental value, $\mathbb{E}_t[u'(c_{t+1}^o)]^{-1}u'(c_{t+1}^o)$ is the risk-neutral probability, and $p_{t+1}$ is the resale value. This pricing equation provides a viewpoint that Bitcoin prices reflect both fundamentals and extrinsic factors.
+
+We can also consider Eqn. 15, and substitute $\lambda$ with LHS of Eqn. 13:
+\begin{align}
+&-\hat{p}_t u'(c_t^y) + \beta \mathbb{E}_t[u'(c_{t+1}^o) \hat{p}_{t+1}] \nonumber \\
+=&\ \hat{p}_t \{-u'(c_t^y) + \beta(1+r_t) \mathbb{E}_t[u'(c_{t+1}^o)]\} \\
+\Rightarrow& \nonumber \\
+& \beta\mathbb{E}_t[u'(c_{t+1}^o) \hat{p}_{t+1}] \nonumber \\
+=&\ \hat{p}_t \beta(1+r_t) \mathbb{E}_t[u'(c_{t+1}^o)] \\
+\Rightarrow & \nonumber \\
+\hat{p}_t =&\ \frac{1}{1+r_t} \mathbb{E}_t[u'(c_{t+1}^o)]^{-1} \mathbb{E}_t[u'(c_{t+1}^o) \hat{p}_{t+1}]
+\end{align}
+
+Eqn. 21 provides an expression for the return on dollars in the cryptoeconomy, in relation to the risk-neutral probability as well as the interest rate. 
+
+
+\subsection{Extended model}
+\label{sec:extensions}
+\subsubsection{Staking and burning}
+In my extended model, I introduce two new mechanisms:
+\begin{itemize}
+    \item Two-part transaction fee with burning
+    \item Interest-bearing staking
+\end{itemize}
+The protocol controls the staking yield (``interest rate") and the base transaction fee rate (burn rate). The figure below illustrates the new dynamics:
+\begin{equation}
+    \begin{tikzcd}[ampersand replacement=\&, column sep = 4.5em, row sep = 4.5em]
+Protocol 
+\ar[d, shift right, "\substack{\text{newly minted}\\\text{tokens}\\(t+1)}" ']
+\&
+\ar[d, shift right, "\substack{\text{endow-}\\\text{ment}}" 'near start]
+\ar[d, shift left, "\substack{\text{purchase}\\ \text{assets}}" near start]
+\&
+\ar[d, "\substack{\text{transact.}\\ \text{benefits}}" ]
+\&
+\\
+Validators
+\ar[u, shift right, red, "\substack{\text{stake}\\\text{tokens}\\(t)}" ' red ]
+\& 
+\substack{Young\\Users}
+\ar[l,"\substack{\text{variable}\\ \text{fees (``tip")}}" ']
+\ar[lu, red, "\substack{\text{base fees}\\ \text{(burned)}}" {sloped,auto}' red]
+\ar[r, dashed, "t+1", 
+"\substack{\text{hold}\\\text{assets}}" ']
+\& 
+\substack{Old\\Users}
+\ar[r, "\substack{\text{hacked}\\ \text{tokens}}"]
+\&
+Hackers
+\end{tikzcd}
+\end{equation}
+Define new variables, following notation in the ideas step:\\
+$L_t$: amount of staked tokens \\
+$\delta_t$: staking yield (set by protocol)\\
+$\varphi_t^b$: base fee (set by protocol)\\
+$\varphi_t^v$: variable fee (competitively determined by validators and users)\\
+The new budget constraints are:
+\begin{align}
+    \text{Young users: } c_t^y &= e_t - s_t - (1+{\color{red} \varphi_t^b+\varphi_t^v}) q_t p_t - \hat{q}_t \hat{p}_t\\
+    \text{Old users: } c_{t+1}^o &=  s_t (1+r_t) + (1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1} \nonumber \\
+     &\hspace{2em} + \theta_{t+1} (1-h_{t+1}) q_t p_{t+1}\\ 
+    \text{Validators: } c_{t+1}^v &= {\color{red} (1+\delta_t) L_t} p_{t+1} + {\color{red} \varphi_{t+1}^v} q_{t+1} p_{t+1} {\color{red} - L_{t+1} p_{t+1} }\\
+    \text{Hackers: } c_{t+1}^h &= h_{t+1} q_t p_{t+1}
+\end{align}
+
+\subsubsection{Endogenous token supply}
+Instead of a predetermined exogenous supply of tokens, now the supply is endogenous and dependent on the staking yield and base fee rate:
+\begin{align}
+    M_{t+1} &= (M_t - L_t) + L_t (1 + \delta_t) - \varphi_t^b X_t \nonumber \\
+    &= M_t + \delta_t L_t - \varphi_t^b X_t
+\end{align}
+$M_t$: total token supply\\
+$X_t \equiv M_t - L_t$: circulating supply (Now the market clearing condition is $X_t=q_t$)\\
+
+
+\subsubsection{Validator's problem}
+Since the amount staked is an active choice by the validators, we now have a new optimization problem by the validators:
+\begin{align}
+\max_{L_{t+1}}\ & u((1+\delta_t) L_t p_{t+1} + \varphi_{t+1}^v q_{t+1} p_{t+1} - L_{t+1}p_{t+1})\\
+    \text{s.t. } & q_{t+1} \leq M_{t+1} - L_{t+1} \nonumber
+\end{align}
+This problem describes the following trade off by the validators:
+\[
+\text{more staking at } t \Rightarrow
+\begin{cases}
+    \text{more staking yield at } t+1\\
+    \text{less circulating supply} \Rightarrow \text{less transact. fees at } t
+\end{cases}
+\]
+Intuitively, the budget constraint should be binding since there should not be idle tokens in the economy: all tokens either enter the circulating supply or be staked to generate yields. Formally, we can apply Karush-Kuhn-Tucker to solve the optimization problem. 
+
+The solution to this problem, and a general equilibrium solution for the extended model, are currently work in progress.
+
+
+
+
+\printbibliography
+
+
+
+\end{document}

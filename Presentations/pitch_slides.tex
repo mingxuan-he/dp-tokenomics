@@ -1,0 +1,383 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath,amsfonts,amssymb,amsthm,
+mathtools,mathrsfs}
+\usepackage{physics}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\usepackage{tikz-cd} % arrow diagram
+
+% Citation style
+\usepackage[style=apa, backend=biber, natbib]{biblatex}
+\addbibresource{../references.bib}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\useoutertheme[subsection=false]{miniframes}
+\setbeamertemplate{frametitle continuation}{}
+\setbeamertemplate{bibliography item}[triangle]
+\setbeamertemplate{sidebar right}{}
+%\addtobeamertemplate{footnote}{}{\vspace{2ex}}
+
+% Presenter notes
+%\setbeameroption{show notes}
+
+
+
+\title[Optimal Cryptoeconomic Policies]{Dynamic Modeling for Optimal Cryptoeconomic Policies}
+\subtitle{Pitch Proposal 2}
+\author{Mingxuan He}
+
+
+\institute[UChicago]{
+M.A. in Computational Social Science -- Economics\\
+Department of Economics, University of Chicago\\
+mingxuanh@uchicago.edu
+}
+
+
+\date{\today}
+
+
+\begin{document}
+
+
+% title page
+\begin{frame}
+\titlepage  
+\end{frame}
+
+% table of contents
+% \begin{frame}
+% \frametitle{Table of Contents}
+% \tableofcontents
+% \end{frame}
+
+
+%----------------
+\section{Introduction}
+
+\begin{frame}{Research Question}
+
+\textbf{How should we design dynamic staking and burning policies?}\newline
+\begin{itemize}
+\item Current protocol-coded policies are static even though crypto-economies face dynamic shocks. ``Staking" and ``burning" rates are the primary coded policy rules in the underlying blockchain system
+\begin{itemize}
+    \item \textbf{Staking (increases ``token supply", decreases ``tokens in circulation")}: mint new tokens and give to those who stake their existing tokens as interest. Similar to interest on reserves.
+    \item \textbf{Burning (decreases ``token supply")}: burn (remove from circulation) a portion of the transaction fee paid by users during blockchain transactions
+    \end{itemize} \textbf{}
+    
+    \item Policy goal: maximize welfare for \underline{good actors}: users (increase in token price) and validators (transaction fees)
+\end{itemize}
+
+\note{
+shocks from the real economy: Banks failing, stock market, interest rates\\
+shocks from other cryptoeconomies: Luna-Terra, FTX/Alameda
+}
+
+\end{frame}
+
+%----------------
+%\section{Literature Review}
+
+\begin{frame}{Literature Review}
+    \begin{itemize}
+        \item Micro foundations:\\
+        {\footnotesize \textit{\citet{nisan2007algorithmic, budish2018economic, biais2019blockchain, gans2019more, gans2022mechanism, huberman2021monopoly}, etc.}}\\
+        $\rightarrow$ \textbf{Block reward and transaction fee as incentive mechanisms}
+
+        \item Pricing models of cryptocurrencies:\\
+        {\footnotesize Bitcoin: \textit{\citet{athey2016bitcoin, garratt2018bitcoin, schilling2019some, schilling2019currency, catalini2020some, biais2020equilibrium, bolt2020value, hinzen2022bitcoin, chiu2017economics}, etc.}}\\
+        {\footnotesize Proof-of-stake: \textit{\citet{catalini2020markets, saleh2019volatility, saleh2021blockchain}}}\\
+        $\rightarrow$ \textbf{Static token supply means all shocks are absorbed by price}
+        \item Monetary policies for stablecoins, platform tokens, and CBDCs:\\
+        {\footnotesize \textit{\citet{cong2021tokenomics, cong2022token, d2022can, fernandez2021central, zhu2019framework, sockin2023model, sockin2023decentralization}, etc.}}\\
+        $\rightarrow$ \textbf{Optimizing policy for defending peg and/or making profit}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Contribution to the Literature}
+\begin{itemize}
+    \item Practical: Most cryptoeconomic systems feature fixed-schedule token supply
+    \begin{itemize}
+        \item deterministic token supply (Bitcoin\footnote{Satoshi Nakamoto (2008). Bitcoin: A peer-to-peer electronic cash system}), 
+        fixed burn rate (Ethereum\footnote{Ethereum Documentation. ``Gas and Fees - Base fees"}), 
+        naive dynamic burning (Binance Coin)
+    \end{itemize}
+
+    \item No published literature has been established on optimal staking and burning policies for proof-of-stake cryptocurrencies.
+\end{itemize}
+Novelty of this research:
+\begin{itemize}
+    \item Applies dynamic general equilibrium methods to model and optimize crypto policies for staking and burning            
+      \item Traditional models for optimal fiscal policy (e.g. Ramsey) and monetary policy (e.g. NK) are not directly transferrable to cryptoeconomies due to transaction fee role in the cryptoeconomy
+  
+\end{itemize}
+\end{frame}
+
+
+
+
+
+%----------------
+\section{Model (baseline)}
+\begin{frame}{The baseline model (Biais et al. 2020, Journal of Finance)}
+\textbf{Idea:} The fundamental value of crypto comes from the stream of future transactional benefits \parencite{tirole1985asset}\\
+\begin{itemize}
+    \item e.g. access to unique goods, not expropriated/taxed/constrained by government, direct internet access
+\end{itemize}
+\textbf{Setup:} Two-period model with overlapping generations
+\begin{itemize}
+    \item Three actors: users, validators (miners), hackers
+    \item Three financial assets: a risk-free asset, a standard currency (dollar), a cryptocurrency (Bitcoin)
+    \item Sources of shocks: endowment, transactional benefit, fees
+\end{itemize}
+\textbf{Result:} Bitcoin price changes partly due to changes in net transactional benefits, but mostly extrinsic volatility
+\end{frame}
+
+
+\begin{frame}{The baseline model (Biais et al. 2020, Journal of Finance)}
+\[
+\begin{tikzcd}[ampersand replacement=\&, column sep = 4.5em, row sep = 4.5em]
+Protocol 
+\ar[d, "\substack{\text{newly minted}\\\text{tokens}}" ']
+\&
+\ar[d, shift right, "\substack{\text{endow-}\\ \text{ment}}" 'near start]
+\ar[d, shift left, "\substack{\text{purchase}\\ \text{assets}}" near start]
+\&
+\ar[d, "\substack{\text{transact.}\\ \text{benefits}}" ]
+\&
+\\
+Validators
+\& 
+\substack{Young\\Users}
+\ar[l,"\substack{\text{transact.}\\ \text{fees}}" ']
+\ar[r, dashed, "t+1", 
+"\substack{\text{hold}\\\text{assets}}" ']
+\& 
+\substack{Old\\Users}
+\ar[r, "\substack{\text{hacked}\\ \text{tokens}}"]
+\&
+Hackers
+\end{tikzcd}
+\]
+In each period: %\hyperlink{formal}{\beamerbutton{Formal Problem}}
+\begin{itemize}
+    \item \textbf{Young users} receive endowment, spend on consumption goods \& financial assets. Pay fees on crypto purchased
+    \item \textbf{Old users} consume savings (some crypto savings get hacked), and receive transactional benefits
+    \item \textbf{Validators} receive newly minted tokens as block rewards
+    \item \textbf{Hackers} hack a portion of users' crypto
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{The baseline model: Users}
+\label{formal}
+\begin{align}
+    \text{Young users: } c_t^y &= e_t- s_t - (1+\varphi_t) q_t p_t - \hat{q}_t \hat{p}_t\\
+    \text{Old users: } c_{t+1}^o &= s_t (1+r_t) + (1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1} \nonumber \\
+    &+ \theta_{t+1} (1-h_{t+1}) q_t p_{t+1} 
+\end{align}
+
+$e_t$: endowment\\
+$s_t$: quantity of risk-free assets held\\
+$q_t, \hat{q}_t$: quantities of crypto and dollars held\\
+$p_t, \hat{p}_t$: prices (in units of consumption goods) of crypto and dollars\\
+$h_{t+1}$: portion of crypto hacked by hackers\\
+$\varphi_t$: transaction fees involved in using crypto (exog.)\footnote{The analysis remain largely unchanged if we include a transaction cost when selling crypto in period $t+1$ as well.}\\
+$\theta_{t+1}$: transactional benefits from using crypto (exog.) (assume $\theta_{t+1}\geq-1$) \\
+
+\end{frame}
+
+
+\begin{frame}{The baseline model: Validators and hackers}
+\begin{align}
+    \text{Validators: } c_{t+1}^v &= (X_{t+1} - X_t) p_{t+1} + \varphi_{t+1} q_{t+1} p_{t+1}\\
+    \text{Hackers: } c_{t+1}^h &= h_{t+1} q_t p_{t+1}
+\end{align}
+$X_t$: stock token supply\\
+$X_{t+1} - X_t$: increase in token supply (newly minted tokens)
+\end{frame}
+
+\begin{frame}{The baseline model: Market clearing}
+Markets for financial assets:
+\begin{align}
+    \text{crypto: } q_t &= X_t \\
+    \text{dollars: } \hat{q}_t &= m \\
+    \text{risk-free assets: } s_t &= 0 \\
+\end{align}
+Market for consumption goods (by Walras's Law):
+\begin{equation}
+    c_t^y + c_t^o + c_t^v + c_t^h = e_t
+\end{equation}
+
+\end{frame}
+
+
+\begin{frame}{The baseline model: Solution}
+A young user in period $t$ solves:
+\begin{align}
+\max_{s_t, q_t, \hat{q}_t} &u(c_t^y) + \beta\mathbb{E}_t u(c_{t+1}^o)\\  
+    \text{subject to  } & \text{user's budget constraint} \nonumber
+\end{align}
+$^*$ Information set at period $t$ includes $ \{\theta_t, \varphi_t, \pi_t\}$ \\
+From FOCs obtain the equilibrium pricing equation for crypto:
+\newcommand{\vp}{\vphantom{\frac{u'(c_{t+1}^o)}{\mathbb{E}_t[u'(c_{t+1}^o)]}}}
+\begin{equation}
+    p_t = 
+    \underbrace{\vp
+    \frac{1}{1+r_t}}_\text{discount}
+    \mathbb{E}_t \Bigl[ 
+    \underbrace{\frac{u'(c_{t+1}^o)}{\mathbb{E}_t[u'(c_{t+1}^o)]}} _\text{risk-neutral prob}
+    \underbrace{\vp
+    (1-h_{t+1})} _\text{hack risk}
+    \underbrace{\vp
+    \frac{1+\theta_{t+1}}{1+\varphi_t}} _{\substack{\text{net transact.}\\ \text{benefits}}}
+     p_{t+1}
+    \Bigr]
+\end{equation}    
+\end{frame}
+
+
+%----------------------------------
+\section{Model (extended)}
+\begin{frame}{Extension 1: Endogenous token supply}
+\[
+\begin{tikzcd}[ampersand replacement=\&, column sep = 4.5em, row sep = 4.5em]
+Protocol 
+\ar[d, shift right, "\substack{\text{newly minted}\\\text{tokens}\\(t+1)}" ']
+\&
+\ar[d, shift right, "\substack{\text{endow-}\\\text{ment}}" 'near start]
+\ar[d, shift left, "\substack{\text{purchase}\\ \text{assets}}" near start]
+\&
+\ar[d, "\substack{\text{transact.}\\ \text{benefits}}" ]
+\&
+\\
+Validators
+\ar[u, shift right, red, "\substack{\text{stake}\\\text{tokens}\\(t)}" ' red ]
+\& 
+\substack{Young\\Users}
+\ar[l,"\substack{\text{variable}\\ \text{fees (``tip")}}" ']
+\ar[lu, red, "\substack{\text{base fees}\\ \text{(burned)}}" {sloped,auto}' red]
+\ar[r, dashed, "t+1", 
+"\substack{\text{hold}\\\text{assets}}" ']
+\& 
+\substack{Old\\Users}
+\ar[r, "\substack{\text{hacked}\\ \text{tokens}}"]
+\&
+Hackers
+\end{tikzcd}
+\]
+I introduce:
+\begin{itemize}
+    \item Two-part transaction fee with burning
+    \item Interest-bearing staking
+    \item The protocol controls the staking yield (``interest rate") and the base transaction fee rate (burn rate)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Introducing staking and burning}
+$^*$ The following is work in progress\\
+
+\textbf{Staking:}
+$L_t$: amount of staked tokens; $\delta_t$: staking yield (set by protocol)\\
+\textbf{Burning:}
+$\varphi_t^b$: base fee (set by protocol); $\varphi_t^v$: variable fee (competitively determined by validators and users)\\
+\ \\
+\textbf{New budget constraints:}
+\begin{align}
+    \text{Young users: } c_t^y &= e_t - s_t - (1+{\color{red} \varphi_t^b+\varphi_t^v}) q_t p_t - \hat{q}_t \hat{p}_t\\
+    \text{Old users: } c_{t+1}^o &=  s_t (1+r_t) + (1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1} \nonumber \\
+     &\hspace{2em} + \theta_{t+1} (1-h_{t+1}) q_t p_{t+1}\\ 
+    \text{Validators: } c_{t+1}^v &= {\color{red} (1+\delta_t) L_t} p_{t+1} + {\color{red} \varphi_{t+1}^v} q_{t+1} p_{t+1} {\color{red} - L_{t+1} p_{t+1} }\\
+    \text{Hackers: } c_{t+1}^h &= h_{t+1} q_t p_{t+1}
+\end{align}
+\end{frame}
+
+
+\begin{frame}{Token supply with staking and burning}
+\begin{align}
+    M_{t+1} &= (M_t - L_t) + L_t (1 + \delta_t) - \varphi_t^b X_t \nonumber \\
+    &= M_t + \delta_t L_t - \varphi_t^b X_t
+\end{align}
+$M_t$: total token supply\\
+$X_t \equiv M_t - L_t$: circulating supply \\
+\quad $\Rightarrow$ Now market clearing condition is $X_t=q_t$\\
+\ \\
+$^*$ In reality the total reward is $\delta_t L_t^\alpha$, with pre-set $\alpha\in [0,1]$\footnote{$\alpha=0.5$ for Ethereum. See Ethereum Documentation. ``Proof-of-Stake Rewards and Penalties"}. Here I set $\alpha=1$ WLOG since $\delta_t$ is dynamic.
+% calculations: https://blog.bitmex.com/ethereums-proof-of-stake-system-calculating-penalties-rewards/
+\end{frame}
+
+
+\begin{frame}{Validator's problem}
+% should validators pay transaction fees when they cash out?
+\begin{align}
+\max_{L_{t+1}}\ & u((1+\delta_t) L_t p_{t+1} + \varphi_{t+1}^v q_{t+1} p_{t+1} - L_{t+1}p_{t+1})\\
+    \text{s.t. } & q_{t+1} \leq M_{t+1} - L_{t+1} \nonumber
+\end{align}
+\textbf{Trade-off:}
+\[
+\text{more staking at } t \Rightarrow
+\begin{cases}
+    \text{more staking yield at } t+1\\
+    \text{less circulating supply} \Rightarrow \text{less transact. fees at } t
+\end{cases}
+\]
+Apply Karush-Kuhn-Tucker to solve the optimization problem
+\end{frame}
+
+
+%----------------
+\section{Next Steps}
+\begin{frame}{Next Steps}
+    \begin{itemize}
+        \item \textbf{The model:} Finish extended model with staking and burning, obtain analytical solution for equilibrium pricing, run simulations using dynare / Python\\
+        \item \textbf{Replicate calibration:} Replicate calibration for baseline model (authors provided full replication code in Python)
+        \item \textbf{Get data on Ethereum:} 
+        \begin{itemize}
+            \item ETH price data: Messari API\footnote{https://messari.io/api} (REST) and Dune Analytics\footnote{https://dune.com/docs/api} (SQL database with execution API in Python)
+            \item ETH staking and burning data: Beacon Chain\footnote{https://ethereum.github.io/beacon-APIs} (REST)
+        \end{itemize}
+        \item \textbf{Calibrate my model}: get ideas after replicating calibration
+    \end{itemize}
+\end{frame}
+
+% \begin{frame}{More extensions to model \& estimation}
+
+% \begin{enumerate}
+%     \item Modify validators' budget constraint: incorporates costs of validation under PoS and PoW \parencite{biais2019blockchain, saleh2019volatility, saleh2021blockchain}
+%     \item Improvement in model calibration 
+%     \begin{itemize}
+%         \item novel time series data on Ethereum price and transaction fees
+%         \item estimate transactional benefits using the NVT (network value to transaction ratio) or RVT (realized value to transaction ratio) metric instead of event-based index
+%     \end{itemize}
+%     \item Use vector autoregression models for exogenous process in variable transaction fees and transaction benefit (e.g. sign restrictions)
+% \end{enumerate}
+% \end{frame}
+
+
+% \begin{frame}{Proposed Project Timeline}
+% \begin{itemize}
+%     \item Spring '23: As final project for ECMA33603 (Macro \& Financial Frictions), replicate the baseline model and implement extensions part 1 (endogenous token supply)
+%     \item Summer '23: Implement extensions part 2; gather ideas from industry internship in Ethereum research \& dev
+%     \item Fall '23 - Winter '24: Extensions part 3: Data collection, model calibration (likely using Ethereum data)
+%     \item Spring '24: Finish paper
+% \end{itemize}
+% \end{frame}
+
+
+% -----------------
+\section*{}
+\begin{frame}[allowframebreaks]{References}
+    \nocite{*}
+    %\bibliographystyle{apalike}
+    %\bibliography{references}
+    \printbibliography
+\end{frame}
+
+
+
+\end{document}
