@@ -1,8 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage[english]{babel}
 
-% Set page size and margins
-% Replace `letterpaper' with`a4paper' for UK/EU standard size
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
 % to typeset URLs, URIs, and DOIs
@@ -14,16 +12,17 @@
 % Bibliography
 \usepackage[style=apa, backend=biber, natbib]{biblatex}
 \addbibresource{../references.bib}
-%\usepackage{natbib}
 
 % useful packages
 \usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools,mathrsfs}
 \usepackage{caption,subcaption}
 \captionsetup{compatibility=false}
 \usepackage{xcolor}
+\usepackage{csquotes}
 \usepackage{soul}
 \usepackage{float}
 \usepackage{tikz-cd}
+\usepackage{subfiles}
 \def\UrlFont{\rmfamily}
 
 \renewcommand \thesection{\Roman{section}}
@@ -36,19 +35,18 @@
 
 
 \author{Mingxuan He\\
-ECMA 33603\\
-Prof. Andre Silva
 }
 
 \maketitle 
 
-\begin{abstract}
-    This paper introduces the idea of my thesis research project and documents my work so far. I provide a research topic description, discuss relevant literature including my replication for a baseline model, and report the current progress on my extended model, which combines two ideas from Stage 1 of the project.
-\end{abstract}
+% \begin{abstract}
+%     This paper introduces the idea of my thesis research project and documents my work so far. I provide a research topic description, discuss relevant literature including my replication for a baseline model, and report the current progress on my extended model, which combines two ideas from Stage 1 of the project.
+% \end{abstract}
 
 %\tableofcontents
 
 \section{Introduction}
+\label{sec:intro}
 In December 2018, the market capitalization of cryptocurrencies reached nearly 400 billion US Dollars, equivalent to 11\% of M1 in the USA \parencite{schilling2019some}. As the size of blockchain and cryptocurrency networks grew, there has been increasing discussion around volatility and welfare in cryptoeconomies, and ways for the issuer of the cryptocurrency protocol to implement policies to ensure there is sustainable benefits for the network of token holders. These policies are often referred to as the protocol's ``tokenomics". 
 
 As of today, most cryptoeconomic policies are static, which means the supply of tokens grows or shrinks according to a deterministic mechanism. For example, the supply of Bitcoin grows at a deterministic and decreasing rate. Many protocols cite these static policies act as an important aspect of decentralization: as the protocol pre-commits to a set of token issuance and burning policies, it reduces the requirement for trust from users in the procotol's governance. However, as demonstrated by both academic literature and recent events, the lack of response mechanisms can lead to devastating results when the cryptoeconomy faces exogenous shocks.
@@ -57,11 +55,12 @@ In many modern blockchain protocols, ``staking" and ``burning" are the primary c
 
 Current staking and burning policy rules were primarily designed for the purpose of offering user incentives and/or preventing inflation from over-issuance. Most importantly, they do not respond to shock factors. My research aims to develop a model framework where staking and burning rules can be set dynamically to maximize the welfare of relevant actors in the cryptoeconomy.
 
-This paper is organized as follows: Section \ref{sec:literature} provides an overview of the established literature. Section \ref{sec:model} outlines the baseline model by \citet{biais2020equilibrium} and replicates its solutions (\ref{sec:baseline}) and outlines the current progress of my extended model (\ref{sec:extensions}).
+This paper is organized as follows: Section \ref{sec:literature} provides an overview of the established literature. Section \ref{sec:model} outlines the baseline model by \citet{biais2020equilibrium} and replicates its solutions (\ref{sec:baseline}) and outlines the current progress of my extended model (\ref{sec:extensions}). Section \ref{sec:data} describes the data I plan to use for calibration.
 
 
 \section{Literature Review}
 \label{sec:literature}
+% TODO: add new William Cong paper
 My research is related to the emerging literature on modeling cryptocurrencies and the blockchain economy. Following \citet{yermack2015bitcoin} that argued that Bitcoin is not a currency, there was an interest in studying Bitcoin as a financial asset. \citet{athey2016bitcoin, garratt2018bitcoin, biais2020equilibrium, pagnotta2022decentralizing} studied equilibria in asset pricing models for Bitcoin. \citet{schilling2019some, schilling2019currency} focused on the interactions between Bitcoin and the real economy, including dollar exchange rate and currency substitution. A broader set of models for Bitcoin include \citet{bolt2020value, catalini2020some, hinzen2022bitcoin, chiu2017economics, huberman2021monopoly}. For Proof-of-Stake protocols, \citet{saleh2019volatility, saleh2021blockchain} modeled their general volatility and welfare, while \citet{catalini2020markets} examined their tokenomics in the presence of an attack. A common result of the aforementioned asset pricing models is that static token supply causes all shocks are absorbed by the token price, which explains the high volatility of Bitcoin. This provides the motivation for an endogenous token supply in my model, which adds response mechanisms in terms of dynamic policy rules therefore can potentially mitigate the price effect of exogenous shocks.
 
 Another set of literature has attempted to identify optimal policy rules for special types of tokens. \citet{cong2021tokenomics, cong2022token} built an asset pricing model featuring token issuance as means of platform financing and user growth leveraging network effects. \citet{sockin2023decentralization, sockin2023model} modeled cryptocurrencies as platform utility tokens and discussed elastic token issuance. \citet{d2022can} studied how stablecoin issuers can profit from seigniorage while maintaining the stablecoin's peg. \citet{fernandez2021central, zhu2019framework} are examples of papers proposing optimal monetary policies for CBDCs. While the policy goals of utility tokens are very specific (defending peg for stablecoins/CBDCs, making profit for stablecoins/platform tokens), I adopt the general policy goal of maximizing user welfare, measured by consumption and transactional benefits.
@@ -69,10 +68,10 @@ Another set of literature has attempted to identify optimal policy rules for spe
 My research is also related to the large literature on cryptocurrencies. Notable empirical researches include \cite{liu2021risks} on the risk factors of cryptocurrencies, \cite{makarov2020trading} on the arbitrage spreads among different cryptocurrency markets. \cite{griffin2020bitcoin} studied the relationship between Tether purchases and cryptocurrency prices. Studies on the microeconomics of blockchain mechanisms include \citet{budish2018economic, biais2019blockchain, gans2019more, gans2022mechanism, huberman2021monopoly}.
 
 
-\section{Model}
+\section{Model} 
 \label{sec:model}
 
-\subsection{Baseline model}
+\subsection{Baseline model} 
 \label{sec:baseline}
 This model was proposed by \citeauthor*{biais2020equilibrium} in their 2020 paper in The Journal of Finance titled ``Equilibrium Bitcoin Pricing". Their main idea is that the fundamental value of cryptocurrencies comes from the stream of future transactional benefits (e.g. access to unique goods, not expropriated/taxed/constrained by government, direct internet access). The primary result is that Bitcoin price changes partly due to changes in fundamentals (net transactional benefits) but mostly due to extrinsic volatility.
 
@@ -113,31 +112,7 @@ Hackers hack a portion of users' crypto. The hackers' budget constraint is:
 \noindent
 I made a graph summarizing of the interaction of the agents in two periods: Figure \ref{fig:tikz-b}.
 
-\begin{equation}
-\label{fig:tikz-b}
-\begin{tikzcd}[ampersand replacement=\&, column sep = 4.5em, row sep = 4.5em]
-Protocol 
-\ar[d, "\substack{\text{newly minted}\\\text{tokens}}" ']
-\&
-\ar[d, shift right, "\substack{\text{endow-}\\ \text{ment}}" 'near start]
-\ar[d, shift left, "\substack{\text{purchase}\\ \text{assets}}" near start]
-\&
-\ar[d, "\substack{\text{transact.}\\ \text{benefits}}" ]
-\&
-\\
-Validators
-\& 
-\substack{Young\\Users}
-\ar[l,"\substack{\text{transact.}\\ \text{fees}}" ']
-\ar[r, dashed, "t+1", 
-"\substack{\text{hold}\\\text{assets}}" ']
-\& 
-\substack{Old\\Users}
-\ar[r, "\substack{\text{hacked}\\ \text{tokens}}"]
-\&
-Hackers
-\end{tikzcd}
-\end{equation}
+\subfile{../Figures/flowchart_baseline.tex}
 
 \subsubsection{Solution}
 Here are my own steps for obtaining the pricing equations for cryptocurrency and standard currency.\\
@@ -210,38 +185,16 @@ In my extended model, I introduce two new mechanisms:
     \item Interest-bearing staking
 \end{itemize}
 The protocol controls the staking yield (``interest rate") and the base transaction fee rate (burn rate). The figure below illustrates the new dynamics:
-\begin{equation}
-    \begin{tikzcd}[ampersand replacement=\&, column sep = 4.5em, row sep = 4.5em]
-Protocol 
-\ar[d, shift right, "\substack{\text{newly minted}\\\text{tokens}\\(t+1)}" ']
-\&
-\ar[d, shift right, "\substack{\text{endow-}\\\text{ment}}" 'near start]
-\ar[d, shift left, "\substack{\text{purchase}\\ \text{assets}}" near start]
-\&
-\ar[d, "\substack{\text{transact.}\\ \text{benefits}}" ]
-\&
-\\
-Validators
-\ar[u, shift right, red, "\substack{\text{stake}\\\text{tokens}\\(t)}" ' red ]
-\& 
-\substack{Young\\Users}
-\ar[l,"\substack{\text{variable}\\ \text{fees (``tip")}}" ']
-\ar[lu, red, "\substack{\text{base fees}\\ \text{(burned)}}" {sloped,auto}' red]
-\ar[r, dashed, "t+1", 
-"\substack{\text{hold}\\\text{assets}}" ']
-\& 
-\substack{Old\\Users}
-\ar[r, "\substack{\text{hacked}\\ \text{tokens}}"]
-\&
-Hackers
-\end{tikzcd}
-\end{equation}
-Define new variables, following notation in the ideas step:\\
+
+\subfile{../Figures/flowchart_extended.tex}
+
+\noindent Define new variables as follows:\\
 $L_t$: amount of staked tokens \\
 $\delta_t$: staking yield (set by protocol)\\
 $\varphi_t^b$: base fee (set by protocol)\\
 $\varphi_t^v$: variable fee (competitively determined by validators and users)\\
-The new budget constraints are:
+
+\noindent The new budget constraints are:
 \begin{align}
     \text{Young users: } c_t^y &= e_t - s_t - (1+{\color{red} \varphi_t^b+\varphi_t^v}) q_t p_t - \hat{q}_t \hat{p}_t\\
     \text{Old users: } c_{t+1}^o &=  s_t (1+r_t) + (1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1} \nonumber \\
@@ -266,6 +219,7 @@ Since the amount staked is an active choice by the validators, we now have a new
 \max_{L_{t+1}}\ & u((1+\delta_t) L_t p_{t+1} + \varphi_{t+1}^v q_{t+1} p_{t+1} - L_{t+1}p_{t+1})\\
     \text{s.t. } & q_{t+1} \leq M_{t+1} - L_{t+1} \nonumber
 \end{align}
+
 This problem describes the following trade off by the validators:
 \[
 \text{more staking at } t \Rightarrow
@@ -274,13 +228,39 @@ This problem describes the following trade off by the validators:
     \text{less circulating supply} \Rightarrow \text{less transact. fees at } t
 \end{cases}
 \]
+
 Intuitively, the budget constraint should be binding since there should not be idle tokens in the economy: all tokens either enter the circulating supply or be staked to generate yields. Formally, we can apply Karush-Kuhn-Tucker to solve the optimization problem. 
 
 The solution to this problem, and a general equilibrium solution for the extended model, are currently work in progress.
 
 
 
+\section{Data}
+\label{sec:data}
+% move intro to ETH to introduction section later?
+The model describes the relationship between a cryptocurrency's prices and its transactional benefits, transaction costs, and hacking risks. As such, I choose the Ethereum blockchain, the second largest blockchain by size today, as the main cryptoeconomy of interest. It native token Ether (ETH) is the largest utility token and second largest cryptocurrency by market capitalization.
 
+Ether is the native token of the Ethereum protocol, which was originally founded in 2014 by Vitalik Buterin as a Proof-of-Work blockchain. In August 2021, the Ethereum blockchain implemented an upgrade referred to as Ethereum Improvement Proposal \#1559 or EIP-1559. EIP-1559 introduced a two-part transaction fee mechanism with an instantly-burned ``base fee" for their transactions to be included in the next block, and a ``priority fee" to pay validators for faster inclusion. In September 2022, Ethereum migrated from a Proof-of-Work (PoW) to Proof-of-Stake (PoS) consensus model (commonly known as ``the Merge"), mandating validator staking as the only source of new ETH tokens. Staking and burning together controls the supply of ETH on the blockchain.
+
+\subsection{Prices}
+% Do we need price data from many exchanges/denominations?
+The data set starts on September 16th, 2022, with the implementation of the Merge, and ends on September 31, 2023. I used time series data of daily ETH-USD prices provided by Messari\footnote{\url{https://messari.io/}}. For robustness checks, I follow \cite{biais2020equilibrium} to construct time series based on ETH prices denominated in five different currencies from 20 major exchanges. For non-USD denominations, I converted the prices using daily USD exchange rates data from Federal Reserve Economic Data (FRED).
+
+
+\subsection{Transaction fees}
+By design of the Ethereum blockchain, information on all historical transactions are publicly visible onchain. For each transaction, I retrieved its value and the associated base fee and priority fee through onchain data provider Dune Analytics\footnote{\url{https://dune.com/}}. Daily transaction volumes are computed by summing the value of all transactions in that day. Daily base fees and priority fees are computed by summing $BaseFee_i=GasUsed_i*BaseFeePerGas_j$ and $PriorityFee_i=GasUsed_i*PriorityFeePerGas_i$, respectively over each transaction $i$ in block $j$ produced in the day. Daily fee rates are then converted into percentages of the daily transaction volume.
+
+Admittedly, this simplified approach does not take into account self-transactions i.e. transfer of funds between different wallet addresses that belong to the same entity. Unfortunately due to the anonymity of the Ethereum blockchain, it is difficult to identify such self-transactions.
+% I will explore ways to overcome that as a robustness check.
+
+\subsection{Transaction benefits}
+% is this too endogenous? marketcap=price*supply; if so would switching to RVT (realized cap/txn volume) solve the problem??
+To measure the benefits of using ETH as a medium of transaction, I use a popular metric called Network Value to Transactions (NVT) ratio. The NVT ratio was originally constructed as an indicator for over- or under-priced tokens, similar to the P/E ratio for traditional equities. Intuitively, the NVT ratio measures how much an average user is willing to pay for a utility token for each unit of transaction volume denominated in that token. 
+
+\subsection{Staking}
+Similar to transactions data, staking data has also been published in real-time on the Ethereum blockchain. I retrieved daily data on total ETH staked and ETH minted as validator rewards from open source Ethereum explorer beaconcha.in\footnote{\url{https://beaconcha.in}}. I then subtract any ETH burned as a result of slashing or other types of validator penalties from ETH minted.
+
+\newpage
 \printbibliography
 
 
