@@ -1,0 +1,32 @@
+\documentclass[../Paper/main.tex]{subfiles}
+
+\begin{document}
+
+\begin{equation}
+    \begin{tikzcd}[ampersand replacement=\&, column sep = 4.5em, row sep = 4.5em]
+Protocol 
+\ar[d, shift right, "\substack{\text{newly minted}\\\text{tokens}\\(t+1)}" ']
+\&
+\ar[d, shift right, "\substack{\text{endow-}\\\text{ment}}" 'near start]
+\ar[d, shift left, "\substack{\text{purchase}\\ \text{assets}}" near start]
+\&
+\ar[d, "\substack{\text{transact.}\\ \text{benefits}}" ]
+\&
+\\
+Validators
+\ar[u, shift right, red, "\substack{\text{stake}\\\text{tokens}\\(t)}" ' red ]
+\& 
+\substack{Young\\Users}
+\ar[l,"\substack{\text{variable}\\ \text{fees (``tip")}}" ']
+\ar[lu, red, "\substack{\text{base fees}\\ \text{(burned)}}" {sloped,auto}' red]
+\ar[r, dashed, "t+1", 
+"\substack{\text{hold}\\\text{assets}}" ']
+\& 
+\substack{Old\\Users}
+\ar[r, "\substack{\text{hacked}\\ \text{tokens}}"]
+\&
+Hackers
+\end{tikzcd}
+\end{equation}
+
+\end{document}
