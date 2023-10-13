@@ -1,0 +1,80 @@
+\documentclass[./main.tex]{subfiles}
+\graphicspath{{\subfix{../Figures/}}}
+
+\begin{document}
+
+\appendix
+\section*{Appendices}
+\addcontentsline{toc}{section}{Appendices}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+
+\subsection{Proofs}
+
+\subsubsection{Solution for deterministic model}
+
+\begin{align}
+    \text{Young users: } && c_t^u &= e_t^u - s_t - (1+ \varphi_t^b+\varphi_t^v) q_t p_t - \hat{q}_t \hat{p}_t\\
+    \text{Old users: } && c_{t+1}^u &=  s_t (1+r_t) + (1-h_{t+1})(1+\theta_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1} \\
+    \text{Young validators: } && c_t^v &= e_t^v + \varphi_t^v q_t p_t - L_t p_t \\
+    \text{Old validators: } && c_{t+1}^v &= (1+\delta_t) L_t p_{t+1} \\
+    \text{Hackers: } && c_{t+1}^h &= h_{t+1} q_t p_{t+1}
+\end{align}
+
+\noindent \textbf{User's problem:}
+\begin{equation}
+    \begin{split}    
+        \max_{s_t, q_t, \hat{q}_t}\quad & u\left(e_t^u - s_t - (1+ \varphi_t^b+\varphi_t^v) q_t p_t - \hat{q}_t \hat{p}_t\right)\\
+        &+ \beta u\left(s_t (1+r_t) + (1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1}\right)
+    \end{split}
+\end{equation}
+
+FOCs:
+\begin{align}
+    \frac{\partial}{\partial s_t}: & -u'(c_t^u) + \beta(1+r_t)u'(c_{t+1}^u) = 0\\
+    \frac{\partial}{\partial q_t}: & -(1+\varphi_t^b+\varphi_t^v) p_t u'(c_t^u) + \beta(1-h_{t+1})(1+\theta_{t+1})p_{t+1}u'(c_{t+1}^u) = 0 \\
+    \frac{\partial}{\partial \hat{q}_t}: & -\hat{p}_t u'(c_t^u) + \beta \hat{p}_{t+1}u'(c_{t+1}^u) = 0
+\end{align}
+
+Result:
+\begin{equation}
+    \Rightarrow \frac{u'(c_t^u)}{u'(c_{t+1}^u)} = \beta (1+r_t) 
+    = \beta \frac{(1+\theta_{t+1})(1-h_{t+1})}{1+\varphi_t^b+\varphi_t^v} \frac{p_{t+1}}{p_t}
+    = \beta \frac{\hat{p}_{t+1}}{\hat{p}_t}
+\end{equation}
+
+\noindent \textbf{Validator's problem:}
+\begin{equation}
+    \max_{L_t}\quad u(e_t^v + \varphi_t^v q_t p_t - L_t p_t) + \beta u((1+\delta_t) L_t p_{t+1})
+\end{equation}
+
+FOC:
+\begin{equation}
+    -p_t u'(c_t^v) + \beta p_{t+1} (1+\delta_t) u'(c_{t+1}^v) = 0
+\end{equation}
+
+Result:
+\begin{equation}
+    \Rightarrow \frac{u'(c_t^v)}{u'(c_{t+1}^v)} = \beta (1+\delta_t) \frac{p_{t+1}}{p_t}
+\end{equation}
+
+\noindent \textbf{With log utility:}
+\begin{equation}
+    u(c_t) = \ln c_t \Rightarrow \frac{u'(c_t)}{u'(c_{t+1})} = \frac{c_{t+1}}{c_t}
+\end{equation}
+
+User (Solve for token demand $q_t$):
+\begin{align}
+    &\text{Combine the consumer budget equations by substituting $s_t$:}\nonumber \\
+    c_{t+1}^u &= (1+r_t) \left[e_t^u - c_t^u - (1+ \varphi_t^b+\varphi_t^v) q_t p_t - \hat{q}_t \hat{p}_t\right] \nonumber \\
+    &\hspace{1em} + (1+\theta_{t+1})(1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1}
+\end{align}
+To be continued...
+
+Validator (solve for amount staked $L_t\rightarrow$ token supply $X_t=M_t-L_t$): 
+\begin{align}
+    \frac{c_{t+1}^v}{c_t^v} = \frac{(1+\delta_t) L_t p_{t+1}}{e_t^v + \varphi_t^v q_t p_t - L_t p_t} &= \beta (1+\delta_t) \frac{p_{t+1}}{p_t}\\
+    L_t &= \beta (\frac{e_t^v}{p_t} + \varphi_t^v q_t - L_t)\\
+    L_t &= \frac{\beta}{1+\beta} (\frac{e_t^v}{p_t} + \varphi_t^v q_t)
+\end{align}
+
+\end{document}
