@@ -12,12 +12,17 @@
 
 \subsubsection{Solution for deterministic model}
 
+\noindent \textbf{Budget constraints:}
 \begin{align}
     \text{Young users: } && c_t^u &= e_t^u - s_t - (1+ \varphi_t^b+\varphi_t^v) q_t p_t - \hat{q}_t \hat{p}_t\\
     \text{Old users: } && c_{t+1}^u &=  s_t (1+r_t) + (1-h_{t+1})(1+\theta_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1} \\
     \text{Young validators: } && c_t^v &= e_t^v + \varphi_t^v q_t p_t - L_t p_t \\
     \text{Old validators: } && c_{t+1}^v &= (1+\delta_t) L_t p_{t+1} \\
-    \text{Hackers: } && c_{t+1}^h &= h_{t+1} q_t p_{t+1}
+    \text{Hackers: } && c_{t+1}^h &= h_{t+1} q_t p_{t+1}\\
+\intertext{\textbf{Market clearing:}}
+    \text{Risk-free assets: } && s_t &= 0\\
+    \text{Tokens: } && q_t &= M_t - L_t\\
+    \text{Fiat: } && \hat{q}_t &= m_t
 \end{align}
 
 \noindent \textbf{User's problem:}
@@ -35,9 +40,9 @@ FOCs:
     \frac{\partial}{\partial \hat{q}_t}: & -\hat{p}_t u'(c_t^u) + \beta \hat{p}_{t+1}u'(c_{t+1}^u) = 0
 \end{align}
 
-Result:
+Euler's equations:
 \begin{equation}
-    \Rightarrow \frac{u'(c_t^u)}{u'(c_{t+1}^u)} = \beta (1+r_t) 
+    \frac{u'(c_t^u)}{u'(c_{t+1}^u)} = \beta (1+r_t) 
     = \beta \frac{(1+\theta_{t+1})(1-h_{t+1})}{1+\varphi_t^b+\varphi_t^v} \frac{p_{t+1}}{p_t}
     = \beta \frac{\hat{p}_{t+1}}{\hat{p}_t}
 \end{equation}
@@ -52,29 +57,72 @@ FOC:
     -p_t u'(c_t^v) + \beta p_{t+1} (1+\delta_t) u'(c_{t+1}^v) = 0
 \end{equation}
 
-Result:
+Euler's equation:
 \begin{equation}
-    \Rightarrow \frac{u'(c_t^v)}{u'(c_{t+1}^v)} = \beta (1+\delta_t) \frac{p_{t+1}}{p_t}
+    \frac{u'(c_t^v)}{u'(c_{t+1}^v)} = \beta (1+\delta_t) \frac{p_{t+1}}{p_t}
 \end{equation}
 
-\noindent \textbf{With log utility:}
+\paragraph{Token market equilibrium with log utility}
+
 \begin{equation}
     u(c_t) = \ln c_t \Rightarrow \frac{u'(c_t)}{u'(c_{t+1})} = \frac{c_{t+1}}{c_t}
 \end{equation}
 
-User (Solve for token demand $q_t$):
+\noindent \textbf{Users' equilibrium token holding:}
 \begin{align}
-    &\text{Combine the consumer budget equations by substituting $s_t$:}\nonumber \\
-    c_{t+1}^u &= (1+r_t) \left[e_t^u - c_t^u - (1+ \varphi_t^b+\varphi_t^v) q_t p_t - \hat{q}_t \hat{p}_t\right] \nonumber \\
-    &\hspace{1em} + (1+\theta_{t+1})(1-h_{t+1}) q_t p_{t+1} + \hat{q}_t \hat{p}_{t+1}
+    \intertext{By users' BC\textcircled{2}:}
+    \hat{q}_t &= \frac{1}{\hat{p}_{t+1}}\left[c_{t+1}^u -  s_t (1+r_t) - (1-h_{t+1})(1+\theta_{t+1}) q_t p_{t+1} \right]\\
+    \intertext{Substitute into users' BC\textcircled{1}, eliminate $s_t$ by market clearing:}
+    c_t^u &= e_t^u - (1+ \varphi_t^b+\varphi_t^v) q_t p_t - \frac{\hat{p}_t}{\hat{p}_{t+1}}\left[c_{t+1}^u - (1-h_{t+1})(1+\theta_{t+1}) q_t p_{t+1} \right]\\
+    \intertext{By users' FOC\textcircled{3}:} 
+    \frac{c_{t+1}^u}{c_t^u}&=\beta\frac{\hat{p}_{t+1}}{\hat{p}_t} \Rightarrow \frac{\hat{p}_t}{\hat{p}_{t+1}}c_{t+1}^u = \beta c_t^u \\
+    \intertext{Eliminate $c_{t+1}^u$ :}
+    c_t^u(1+\beta) &= e_t^u - (1+ \varphi_t^b+\varphi_t^v) q_t p_t + \frac{\hat{p}_t}{\hat{p}_{t+1}}(1-h_{t+1})(1+\theta_{t+1}) q_t p_{t+1}\\
+    \intertext{Substitute users' BC\textcircled{1} and $s_t=0,\hat{q}_t=m_t$ on LHS:}
+    &(1+\beta)\left[ e_t^u - (1+ \varphi_t^b+\varphi_t^v) q_t p_t - m_t \hat{p}_t \right] \nonumber \\ 
+    &= e_t^u - (1+ \varphi_t^b+\varphi_t^v) q_t p_t + \frac{\hat{p}_t}{\hat{p}_{t+1}}(1-h_{t+1})(1+\theta_{t+1}) q_t p_{t+1}\\
+    \intertext{Merge terms:}
+    \beta e_t^u - (1+\beta)m_t\hat{p}_t &= q_t p_t \left[\beta(1+ \varphi_t^b+\varphi_t^v) + \frac{\hat{p}_t}{\hat{p}_{t+1}}(1-h_{t+1})(1+\theta_{t+1}) \frac{p_{t+1}}{p_t}\right]
 \end{align}
-To be continued...
+Hence the inverse demand curve is
+\begin{equation}
+    q_t = \left[ \beta \frac{e_t^u}{p_t} - (1+\beta)m_t \frac{\hat{p}_t}{p_t} \right]
+    \left[\beta(1+ \varphi_t^b+\varphi_t^v) + \frac{(1-h_{t+1})(1+\theta_{t+1})}{1+r_t} \frac{p_{t+1}}{p_t}\right]^{-1}
+\end{equation}
 
-Validator (solve for amount staked $L_t\rightarrow$ token supply $X_t=M_t-L_t$): 
+
+\noindent \textbf{Validators' equilibrium staking:}
 \begin{align}
     \frac{c_{t+1}^v}{c_t^v} = \frac{(1+\delta_t) L_t p_{t+1}}{e_t^v + \varphi_t^v q_t p_t - L_t p_t} &= \beta (1+\delta_t) \frac{p_{t+1}}{p_t}\\
-    L_t &= \beta (\frac{e_t^v}{p_t} + \varphi_t^v q_t - L_t)\\
-    L_t &= \frac{\beta}{1+\beta} (\frac{e_t^v}{p_t} + \varphi_t^v q_t)
+    L_t &= \beta \left(\frac{e_t^v}{p_t} + \varphi_t^v q_t - L_t\right)\\
+    L_t &= \frac{\beta}{1+\beta} \left(\frac{e_t^v}{p_t} + \varphi_t^v q_t\right)\\
+    \intertext{By market clearing $q_t+L_t=M_t$:}
+    q_t+\frac{\beta}{1+\beta} \left(\frac{e_t^v}{p_t} + \varphi_t^v q_t\right) &= M_t\\
+    q_t\left(1+\frac{\beta}{1+\beta}\varphi_t^v\right) &= M_t - \frac{\beta}{1+\beta}\frac{e_t^v}{p_t}
+\end{align}
+Hence the inverse supply curve is
+\begin{equation}
+    q_t = \left(1+\frac{\beta}{1+\beta}\varphi_t^v\right)^{-1} \left(M_t - \frac{\beta}{1+\beta}\frac{e_t^v}{p_t}\right)
+\end{equation}
+
+\noindent \textbf{Token market equilibrium:}\\
+Let $p_t^*$ be the equilibrium price of crypto tokens. $p_t^*$ must satisfy:
+\begin{align}
+    & \left[ \beta \frac{e_t^u}{p_t^*} - (1+\beta)m_t \frac{\hat{p}_t}{p_t^*} \right]
+    \left[\beta(1+ \varphi_t^b+\varphi_t^v) + \frac{(1-h_{t+1})(1+\theta_{t+1})}{1+r_t} \frac{p_{t+1}}{p_t^*}\right]^{-1} \nonumber \\
+    &= \left(1+\frac{\beta}{1+\beta}\varphi_t^v\right)^{-1} \left(M_t - \frac{\beta}{1+\beta}\frac{e_t^v}{p_t^*}\right)
+    \intertext{which can be alternatively written as a quardatic function of $\frac{1}{p_t^*}$:}
+    A_t \frac{1}{p_t^*} &= (M_t + B_t\frac{1}{p_t^*}) (C_t + D_t\frac{1}{p_t^*}) \\
+    \intertext{where}
+    A_t &:= \left[ \beta e_t^u - (1+\beta)m_t \hat{p}_t \right] \left(1+\frac{\beta}{1+\beta}\varphi_t^v\right);\\
+    B_t &:= - \frac{\beta}{1+\beta} e_t^v;\\
+    C_t &:= \beta(1+ \varphi_t^b+\varphi_t^v);\\
+    D_t &:= \frac{(1-h_{t+1})(1+\theta_{t+1})}{1+r_t} p_{t+1}
+    \intertext{Therefore the closed-form solution for equilibrium token price is given by}
+    p_t^* &= \frac{2B_tD_t}{A_t-M_t D_t-B_tC_t - \sqrt{(M_t D_t+B_t C_t-A_t)^2-4M_t B_tC_tD_t}}\\
+    \intertext{under the following technical conditions:}
+    4M_t B_tC_tD_t &\leq (M_t D_t+B_t C_t-A_t)^2\\
+    A_t-M_t D_t-B_tC_t &\neq \sqrt{(M_t D_t+B_t C_t-A_t)^2-4M_t B_tC_tD_t}
 \end{align}
 
 \end{document}
