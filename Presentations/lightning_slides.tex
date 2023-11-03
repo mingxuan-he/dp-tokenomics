@@ -59,7 +59,7 @@ mingxuanh@uchicago.edu
 %----------------
 \section{Introduction}
 
-\begin{frame}{Research Question}
+\begin{frame}{Research question}
 
 \textbf{How should we design dynamic staking and burning policies for Proof-of-Stake cryptoeconomies?}\newline
 \begin{itemize}
@@ -69,7 +69,7 @@ mingxuanh@uchicago.edu
     \item \textbf{Burning (decreases ``token supply")}: burn (remove from circulation) a portion of the transaction fee paid by users during blockchain transactions
     \end{itemize} \textbf{}
     
-    \item Policy goal: maximize welfare for \underline{good actors}: users (increase in token price) and validators (transaction fees)
+    \item Policy goal: maximize welfare for \underline{good actors}: users (increase in token price \& consumption) and validators (transaction fees)
 \end{itemize}
 
 \note{
@@ -82,7 +82,7 @@ shocks from other cryptoeconomies: Luna-Terra, FTX/Alameda
 %----------------
 %\section{Literature Review}
 
-\begin{frame}{Literature Review}
+\begin{frame}{Literature review}
     \begin{itemize}
         \item Micro foundations:\\
         {\footnotesize \textit{\citet{nisan2007algorithmic, budish2018economic, biais2019blockchain, gans2019more, gans2022mechanism, huberman2021monopoly}, etc.}}\\
@@ -98,23 +98,21 @@ shocks from other cryptoeconomies: Luna-Terra, FTX/Alameda
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Contribution to the Literature}
+\begin{frame}{Contribution to the literature}
 \begin{itemize}
-    \item Practical: Most cryptoeconomic systems feature fixed-schedule token supply
+    \item Practical: Most cryptoeconomic systems feature fixed-schedule token supply, creating highly volatile token prices
+    \item Problem: Traditional models for optimal fiscal policy (e.g. Ramsey) and monetary policy (e.g. NK) are not directly transferrable to cryptoeconomies due to transaction fee role in the cryptoeconomy
+    % \begin{itemize}
+    %     \item deterministic token supply (Bitcoin\footnote{Satoshi Nakamoto (2008). Bitcoin: A peer-to-peer electronic cash system}), 
+    %     fixed burn rate (Ethereum\footnote{Ethereum Documentation. ``Gas and Fees - Base fees"}), 
+    %     naive dynamic burning (Binance Coin)
+    % \end{itemize}
+    \item Novel hypothesis: Dynamic token supply (via staking and burning policies) can be used to optimize welfare 
     \begin{itemize}
-        \item deterministic token supply (Bitcoin\footnote{Satoshi Nakamoto (2008). Bitcoin: A peer-to-peer electronic cash system}), 
-        fixed burn rate (Ethereum\footnote{Ethereum Documentation. ``Gas and Fees - Base fees"}), 
-        naive dynamic burning (Binance Coin)
+        \item implement in a dynamic equilibrium model framework
     \end{itemize}
+\end{itemize}
 
-    \item No published literature has been established on optimal staking and burning policies for proof-of-stake cryptocurrencies.
-\end{itemize}
-Novelty of this research:
-\begin{itemize}
-    \item Applies dynamic general equilibrium methods to model and optimize crypto policies for staking and burning            
-      \item Traditional models for optimal fiscal policy (e.g. Ramsey) and monetary policy (e.g. NK) are not directly transferrable to cryptoeconomies due to transaction fee role in the cryptoeconomy
-  
-\end{itemize}
 \end{frame}
 
 
@@ -216,13 +214,13 @@ Hackers
     $X_t \equiv M_t - L_t$: circulating supply \\
     \quad $\Rightarrow$ Token market clearing condition is $X_t=q_t$\\
     \ \\
-    $^*$ In reality the total reward is $\delta_t L_t^\alpha$, with pre-set $\alpha\in [0,1]$\footnote{$\alpha=0.5$ for Ethereum. See Ethereum Documentation. ``Proof-of-Stake Rewards and Penalties"}. Here I set $\alpha=1$ WLOG since $\delta_t$ is dynamic.
+    $^*$ In reality the total reward is $\delta_t L_t^\alpha$, with pre-set $\alpha\in [0,1]$\footnote{$\alpha=0.5$ for Ethereum. See Ethereum Documentation. ``Proof-of-Stake Rewards and Penalties"}. Here I set $\alpha=1$ for simplicity.
     % calculations: https://blog.bitmex.com/ethereums-proof-of-stake-system-calculating-penalties-rewards/
 \end{frame}
 
 
-\begin{frame}{First order conditions}
-    * for a deterministic version of the model
+\begin{frame}{First order conditions}    
+    $^*$ using a deterministic version of the model
     \bigskip
 
     User's Euler equations:
@@ -237,23 +235,54 @@ Hackers
         \frac{u'(c_t^v)}{u'(c_{t+1}^v)} = \beta (1+\delta_t) \frac{p_{t+1}}{p_t}
     \end{equation}
 
-    WIP: Equilibrium solutions with stochasticity \& log/CRRA preferences
+    %WIP: Equilibrium solutions with stochasticity \& log/CRRA preferences
 \end{frame}
 
-
+\begin{frame}{Token market equilibrium}
+    \hyperlink{det_math}{\beamerbutton{Appendix: deterministic math}}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{../Figures/det_SD.png}
+        \caption{Illustration of token market equilibrium using artificial parameters. Both supply and demand are convex in $q$}
+    \end{figure}
+    
+\end{frame}
 
 %----------------
 \section{Calibration}
-\begin{frame}{Calibration (idea phase)}
-    \begin{itemize}
-        \item \textbf{Data sources:} Ethereum prices from Messari API, txn fees from Dune Analytics, staking data from beaconcha.in
-        \item \textbf{Period:} Sep 2022 - now, down to block frequency (12s) 24/7
-        \item Proxy for transactional benefits/convenience yields: average onchain txn processing per second $a_t$\citep{cong2022staking}
-        \begin{itemize}
-            \item other potential proxies: Metcalfe's measure $\log(DailyActiveAddresses^2)$; \href{https://www.ncsl.org/financial-services/cryptocurrency-2023-legislation}{index on US crypto regulation (NCSL.org)}
-        \end{itemize}
 
-        \item Proxy for hacking: manually index major hacks and wallet losses
+\begin{frame}{The Ethereum (ETH) blockchain}
+    Ethereum (created by V. Buterin in 2013) is currently the second largest cryptoeconomy after Bitcoin.\\
+    \bigskip
+    Important historical upgrades to Ethereum's tokenomics:
+    \begin{itemize}
+        \item London upgrade (Aug 2021): introduced base fee burning via EIP-1559
+        \item ``The Merge" (Sep 2022): transition from computing-based (PoW) to staking-based issuance (PoS) i.e. Ethereum 2.0
+        \item Shanghai-Capella upgrade (Apr 2023): unlocked withdrawls of staked ETH \footnote{Hypothesis: this changes validators' staking behaviors}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ethereum 2.0 data}
+    Despite having only 6-12 months of history, Ethereum 2.0 data is rich and highly accessible:
+    \begin{itemize}
+        \item All transactions are publicly broadcasted to the blockchain every 12 seconds (block time), 24/7
+        \item All validators' staking actions and rewards are also recorded
+        \item ETH-USD price data are available from both onchain sources (DEX) and offchain (CEX/``oracle") sources
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Features for calibration}
+    \begin{itemize}
+        \item Method: baseline - OLS; advanced - VAR
+        \item Data sources: Ethereum prices from Messari API, txn fees from Dune Analytics, staking data from beaconcha.in
+        \item Proxy for transactional benefits/convenience yields: 
+        \begin{itemize}
+            \item Throughput measures: average onchain txn processing per second \citep{cong2022staking}; user operations per second (new measure proposed by industry researchers)
+            \item Network-based measures: Metcalfe's measure $\log(DailyActiveAddresses^2)$; 
+            \item Additional controls: \href{https://www.ncsl.org/financial-services/cryptocurrency-2023-legislation}{index on US crypto regulation (NCSL.org)}
+        \end{itemize}
+        \item Proxy for hacking: manually index major hacks and wallet losses (problem: frequency is much lower than txn/staking actions)
     \end{itemize}
 \end{frame}
 
@@ -291,5 +320,38 @@ Hackers
 \end{frame}
 
 
+\section{Appendix}
+\begin{frame}[noframenumbering]{Deterministic solutions (cont.)}
+    \label{det_math}
+    \begin{align}
+        \intertext{Inverse demand curve:}
+        q_t &= \left[ \beta \frac{e_t^u}{p_t} - (1+\beta)m_t \frac{\hat{p}_t}{p_t} \right] \cdot\\
+            & \left[\beta(1+ \varphi_t^b+\varphi_t^v) + \frac{(1-h_{t+1})(1+\theta_{t+1})}{1+r_t} \frac{p_{t+1}}{p_t}\right]^{-1}\\
+        \intertext{Inverse supply curve:}
+        q_t &= \left(1+\frac{\beta}{1+\beta}\varphi_t^v\right)^{-1} \left(M_t - \frac{\beta}{1+\beta}\frac{e_t^v}{p_t}\right)
+    \end{align}
+    
+\end{frame}
+
+\begin{frame}[noframenumbering]{Deterministic solutions (cont.)}
+    \begin{align}
+        \intertext{Token market clearing implies $\frac{1}{p_t^*}$ must satisfy the quadratic equation}
+        A_t \frac{1}{p_t^*} &= (M_t + B_t\frac{1}{p_t^*}) (C_t + D_t\frac{1}{p_t^*}) \\
+        \intertext{where}
+        A_t &:= \left[ \beta e_t^u - (1+\beta)m_t \hat{p}_t \right] \left(1+\frac{\beta}{1+\beta}\varphi_t^v\right);\quad
+        B_t := - \frac{\beta}{1+\beta} e_t^v;\\
+        C_t &:= \beta(1+ \varphi_t^b+\varphi_t^v);\quad
+        D_t := \frac{(1-h_{t+1})(1+\theta_{t+1})}{1+r_t} p_{t+1}
+        \end{align}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Deterministic solutions (cont.)}
+    \begin{align}
+        \intertext{Therefore the closed-form solution for equilibrium token price is given by}
+        p_t^* &= \frac{2B_tD_t}{A_t-M_t D_t-B_tC_t - \sqrt{(M_t D_t+B_t C_t-A_t)^2-4M_t B_tC_tD_t}}\\
+        \intertext{under some technical conditions.}\nonumber
+    \end{align}
+    
+\end{frame}
 
 \end{document}
