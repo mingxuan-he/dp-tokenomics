@@ -1,6 +1,7 @@
 .vscode
 Readings
 __pycache__
+server_user_id.txt
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
