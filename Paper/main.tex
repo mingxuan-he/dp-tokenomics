@@ -58,15 +58,7 @@ Current staking and burning policy rules were primarily designed for the purpose
 This paper is organized as follows: Section \ref{sec:literature} provides an overview of the established literature. Section \ref{sec:model} outlines the baseline model by \citet{biais2023equilibrium} and replicates its solutions (\ref{sec:baseline}) and outlines the current progress of my extended model (\ref{sec:extensions}). Section \ref{sec:data} describes the data I plan to use for calibration.
 
 
-\section{Literature Review}
-\label{sec:literature}
-% TODO: add new William Cong paper
-My research is related to the emerging literature on modeling cryptocurrencies and the blockchain economy. Following \citet{yermack2015bitcoin} that argued that Bitcoin is not a currency, there was an interest in studying Bitcoin as a financial asset. \citet{athey2016bitcoin, garratt2018bitcoin, biais2023equilibrium, pagnotta2022decentralizing} studied equilibria in asset pricing models for Bitcoin. \citet{schilling2019some, schilling2019currency} focused on the interactions between Bitcoin and the real economy, including dollar exchange rate and currency substitution. A broader set of models for Bitcoin include \citet{bolt2020value, catalini2020some, hinzen2022bitcoin, chiu2017economics, huberman2021monopoly}. For Proof-of-Stake protocols, \citet{saleh2019volatility, saleh2021blockchain} modeled their general volatility and welfare, while \citet{catalini2020markets} examined their tokenomics in the presence of an attack. A common result of the aforementioned asset pricing models is that static token supply causes all shocks are absorbed by the token price, which explains the high volatility of Bitcoin. This provides the motivation for an endogenous token supply in my model, which adds response mechanisms in terms of dynamic policy rules therefore can potentially mitigate the price effect of exogenous shocks.
-
-Another set of literature has attempted to identify optimal policy rules for special types of tokens. \citet{cong2021tokenomics, cong2022token} built an asset pricing model featuring token issuance as means of platform financing and user growth leveraging network effects. \citet{sockin2023decentralization, sockin2023model} modeled cryptocurrencies as platform utility tokens and discussed elastic token issuance. \citet{d2022can} studied how stablecoin issuers can profit from seigniorage while maintaining the stablecoin's peg. \citet{fernandez2021central, zhu2019framework} are examples of papers proposing optimal monetary policies for CBDCs. While the policy goals of utility tokens are very specific (defending peg for stablecoins/CBDCs, making profit for stablecoins/platform tokens), I adopt the general policy goal of maximizing user welfare, measured by consumption and transactional benefits.
-
-My research is also related to the large literature on cryptocurrencies. Notable empirical researches include \cite{liu2021risks} on the risk factors of cryptocurrencies, \cite{makarov2020trading} on the arbitrage spreads among different cryptocurrency markets. \cite{griffin2020bitcoin} studied the relationship between Tether purchases and cryptocurrency prices. Studies on the microeconomics of blockchain mechanisms include \citet{budish2018economic, biais2019blockchain, gans2019more, gans2022mechanism, huberman2021monopoly}.
-
+\subfile{literature}
 
 \section{Model} 
 \label{sec:model}
@@ -192,7 +184,7 @@ The protocol controls the staking yield (``interest rate") and the base transact
 $L_t$: amount of staked tokens \\
 $\delta_t$: staking yield (set by protocol)\\
 $\varphi_t^b$: base fee (set by protocol)\\
-$\varphi_t^v$: variable fee (competitively determined by validators and users)\\
+$\varphi_t^v$: variable fee (exogenously determined by the market for block spaces)\\
 
 \noindent The new budget constraints are:
 \begin{align}
@@ -231,7 +223,8 @@ This problem describes the following trade off by the validators:
 
 Intuitively, the budget constraint should be binding since there should not be idle tokens in the economy: all tokens either enter the circulating supply or be staked to generate yields. Formally, we can apply Karush-Kuhn-Tucker to solve the optimization problem. 
 
-The solution to this problem, and a general equilibrium solution for the extended model, are currently work in progress.
+In the Appendix, I outline the solution to a deterministic version of the model.
+
 
 
 
@@ -240,7 +233,7 @@ The solution to this problem, and a general equilibrium solution for the extende
 % move intro to ETH to introduction section later?
 The model describes the relationship between a cryptocurrency's prices and its transactional benefits, transaction costs, and hacking risks. As such, I choose the Ethereum blockchain, the second largest blockchain by size today, as the main cryptoeconomy of interest. It native token Ether (ETH) is the largest utility token and second largest cryptocurrency by market capitalization.
 
-Ether is the native token of the Ethereum protocol, which was originally founded in 2014 by Vitalik Buterin as a Proof-of-Work blockchain. In August 2021, the Ethereum blockchain implemented an upgrade referred to as Ethereum Improvement Proposal \#1559 or EIP-1559. EIP-1559 introduced a two-part transaction fee mechanism with an instantly-burned ``base fee" for their transactions to be included in the next block, and a ``priority fee" to pay validators for faster inclusion. In September 2022, Ethereum migrated from a Proof-of-Work (PoW) to Proof-of-Stake (PoS) consensus model (commonly known as ``the Merge"), mandating validator staking as the only source of new ETH tokens. Staking and burning together controls the supply of ETH on the blockchain.
+Ether is the native token of the Ethereum protocol, which was originally founded in 2014 by Vitalik Buterin as a proof-of-work blockchain. In August 2021, the Ethereum blockchain implemented an upgrade referred to as Ethereum Improvement Proposal \#1559 or EIP-1559. EIP-1559 introduced a two-part transaction fee mechanism with an instantly-burned ``base fee" for their transactions to be included in the next block, and a ``priority fee" to pay validators for faster inclusion. In September 2022, Ethereum migrated from a proof-of-work (PoW) to proof-of-stake (PoS) consensus model (commonly known as ``the Merge"), mandating validator staking as the only source of new ETH tokens. Staking and burning together controls the supply of ETH on the blockchain.
 
 \subsection{Prices}
 % Do we need price data from many exchanges/denominations?
@@ -248,7 +241,7 @@ The data set starts on September 16th, 2022, with the implementation of the Merg
 
 
 \subsection{Transaction fees}
-By design of the Ethereum blockchain, information on all historical transactions are publicly visible onchain. For each transaction, I retrieved its value and the associated base fee and priority fee through onchain data provider Dune Analytics\footnote{\url{https://dune.com/}}. Daily transaction volumes are computed by summing the value of all transactions in that day. Daily base fees and priority fees are computed by summing $BaseFee_i=GasUsed_i*BaseFeePerGas_j$ and $PriorityFee_i=GasUsed_i*PriorityFeePerGas_i$, respectively over each transaction $i$ in block $j$ produced in the day. Daily fee rates are then converted into percentages of the daily transaction volume.
+By design of the Ethereum blockchain, information on all historical transactions are publicly visible onchain. For each transaction, I retrieved its value and the associated base fee and priority fee through onchain data provider Etherscan\footnote{\url{https://etherscan.io/}}. Daily transaction volumes are computed by summing the value of all transactions in that day. Daily base fees and priority fees are computed by summing $BaseFee_i=GasUsed_i*BaseFeePerGas_j$ and $PriorityFee_i=GasUsed_i*PriorityFeePerGas_i$, respectively over each transaction $i$ in block $j$ produced in the day. Daily fee rates are then converted into percentages of the daily transaction volume.
 
 Admittedly, this simplified approach does not take into account self-transactions i.e. transfer of funds between different wallet addresses that belong to the same entity. Unfortunately due to the anonymity of the Ethereum blockchain, it is difficult to identify such self-transactions.
 % I will explore ways to overcome that as a robustness check.
@@ -259,6 +252,10 @@ To measure the benefits of using ETH as a medium of transaction, I use a popular
 
 \subsection{Staking}
 Similar to transactions data, staking data has also been published in real-time on the Ethereum blockchain. I retrieved daily data on total ETH staked and ETH minted as validator rewards from open source Ethereum explorer beaconcha.in\footnote{\url{https://beaconcha.in}}. I then subtract any ETH burned as a result of slashing or other types of validator penalties from ETH minted.
+
+
+\section{Calibration}
+This is work in progress.
 
 %--------------------Appendices--------------------
 \newpage
